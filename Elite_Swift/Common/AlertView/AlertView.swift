@@ -133,7 +133,7 @@ class AlertView: UIView {
         
         let y = (self.height() - contentHeight) / 2 - 50
         contenView = UIView.init(frame: CGRect(x: kAlertMargin, y: y, width: width, height: contentHeight))
-        contenView.backgroundColor = UIColor.modalTintColor
+        contenView.backgroundColor = UIColor.mainColor
         contenView.alpha = 1
         contenView.layer.cornerRadius = 5
         contenView.layer.masksToBounds = true

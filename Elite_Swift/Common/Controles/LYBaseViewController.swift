@@ -9,8 +9,7 @@
 import UIKit
 
 class LYBaseViewController: UIViewController {
-
-    typealias difneBlock = ()
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         self.view.backgroundColor = UIColor.mainColor
@@ -24,7 +23,6 @@ class LYBaseViewController: UIViewController {
     override func viewDidDisappear(_ animated: Bool) {
         super.viewDidDisappear(animated)
     }
-    
     
 }
 
@@ -79,7 +77,7 @@ extension LYBaseViewController {
     
     
     func alertMsg(msg: NSString, cancleSEL: Selector, confirmSEL: Selector)  {
-        self.systemAlert(msg: msg, cancelText: "取消", cancel: cancleSEL, confirmText: "确认", confirm: confirmSEL)
+        systemAlert(msg: msg, cancelText: "取消", cancel: cancleSEL, confirmText: "确认", confirm: confirmSEL)
     }
     
     /// 调用系统的提示
@@ -92,15 +90,14 @@ extension LYBaseViewController {
     ///   - confirm: 确认事件
     func systemAlert(msg: NSString,cancelText: NSString,cancel: Selector,confirmText: NSString, confirm: Selector) -> Void {
        
-        weak var vc: LYBaseViewController?
         let alertCtrl = UIAlertController.init(title: nil, message: msg as String, preferredStyle: .alert)
         
         let confirmAction = UIAlertAction.init(title: confirmText as String, style: .default) { (action) in
-            vc?.performSelector(onMainThread: confirm, with: nil, waitUntilDone: true)
+            self.performSelector(onMainThread: confirm, with: nil, waitUntilDone: true)
         }
         
         let cancleAction = UIAlertAction.init(title: cancelText as String, style: .cancel) { (action) in
-            vc?.performSelector(onMainThread: cancel, with: nil, waitUntilDone: true)
+            self.performSelector(onMainThread: cancel, with: nil, waitUntilDone: true)
         }
         
         if cancelText.length > 0{
@@ -118,10 +115,12 @@ extension LYBaseViewController {
 //自定义提醒款
 extension LYBaseViewController {
     
-    func customAleatView(title: NSString, message: NSString)  {
+    func customAleatView(title: NSString, message: NSString, callBack:@escaping (_ content:String) ->())  {
         let alertView = AlertView.init(frame: self.view.bounds, title: title, message: message)
+        
         let actionDefin = AlertAction().aciotn(title: "确定") { (aciont) in
             print(aciont.title as Any)
+            callBack(title as String)
         }
         let actionCancle = AlertAction().aciotn(title: "取消") { (action) in
             print(action.title as Any)
@@ -130,4 +129,131 @@ extension LYBaseViewController {
         alertView.show()
         self.view.addSubview(alertView)
     }
+}
+
+//导航栏相关的
+extension LYBaseViewController {
+   
+    /// z设置导航栏右边的文本
+    ///
+    /// - Parameters:
+    ///   - text: 文本
+    ///   - callblock: 点击事件
+    func setNavRightButtonWithText(text: NSString, sel: Selector?) {
+        if (self.navigationController != nil) {
+            let rightBtn = UIButton.init(type: .custom)
+            rightBtn.setTitle(text as String, for: .normal)
+            rightBtn.setTitleColor(UIColor.white, for: .normal)
+            rightBtn.titleLabel?.font = UIFont.systemFont(ofSize: 14)
+            rightBtn.addTarget(self, action: sel!, for: .touchUpInside)
+            let size = text.sizefont(font: UIFont.systemFont(ofSize: 14))
+            rightBtn.frame = CGRect(x: 0, y: 0, width: size.width, height: 44)
+         if (sel == nil){
+                rightBtn.isEnabled = false
+            }
+            setNavrightCustomView(cutomView: rightBtn)
+        }
+    }
+   
+   /// z设置导航栏左边的文本
+   ///
+   /// - Parameters:
+   ///   - text: 文本
+   ///   - callBlock: 点击事件
+   func setNavLeftButtonWithText(text: NSString, sel: Selector?) {
+      if (self.navigationController != nil) {
+         let leftBtn = UIButton.init(type: .custom)
+         leftBtn.setTitle(text as String, for: .normal)
+         leftBtn.setTitleColor(UIColor.white, for: .normal)
+         leftBtn.titleLabel?.font = UIFont.systemFont(ofSize: 14)
+         leftBtn.addTarget(self, action: sel!, for: .touchUpInside)
+         let size = text.sizefont(font: UIFont.systemFont(ofSize: 14))
+         leftBtn.frame = CGRect(x: 0, y: 0, width: size.width, height: 44)
+         if sel == nil {
+            leftBtn.isEnabled = false
+         }
+         setNavLeftCutomView(cutomView: leftBtn)
+      }
+   }
+   
+   /// 自定义导航栏右边的button图片
+   ///
+   /// - Parameters:
+   ///   - iconName: 图片名称
+   ///   - sel: 点击事件
+   func setNavRightButton(iconName: NSString, sel: Selector?) {
+      
+      if (self.navigationController != nil) {
+         let btn = creatButtonWithIcon(name: iconName, isLeft: false)
+         if btn == nil{
+            return
+         }
+         if sel == nil{
+            return
+         }
+         else{
+            btn?.addTarget(sel, action: sel!, for: .touchUpInside)
+         }
+         setNavrightCustomView(cutomView: btn!)
+      }
+   }
+   
+   /// 自定义导航栏左边的button图片
+   ///
+   /// - Parameters:
+   ///   - iconName: 图片名称
+   ///   - sel: 点击事件
+   func setNavLeftButton(iconName: NSString, sel: Selector?) {
+      if (self.navigationController != nil) {
+         let btn = creatButtonWithIcon(name: iconName, isLeft: true)
+         if btn == nil{
+            return
+         }
+         if sel == nil{
+            return
+         }
+         else{
+            btn?.addTarget(sel, action: sel!, for: .touchUpInside)
+         }
+         setNavLeftCutomView(cutomView: btn!)
+      }
+   }
+   
+   /// 生成导航栏两侧的icon的button
+   ///
+   /// - Parameters:
+   ///   - name: 图片名称
+   ///   - isLeft: 是否是导航栏左边进来的
+   /// - Returns: 返回button
+   private func creatButtonWithIcon(name: NSString, isLeft: Bool) -> UIButton? {
+      
+      let iconImage = UIImage(named: name as String)
+       if iconImage == nil {
+         return nil
+       }
+      let btnHeight: CGFloat = 44.0
+      let btnWidth = iconImage!.size.width / iconImage!.size.height * btnHeight
+      let offsetLeft = btnWidth - iconImage!.size.width
+      let offsetRight = btnWidth - iconImage!.size.width
+      let btn = UIButton.init(type: .custom)
+      btn.setImage(iconImage, for: .normal)
+      if offsetLeft > 0 && isLeft {
+         btn.imageEdgeInsets = UIEdgeInsets(top: 0, left: -offsetLeft, bottom: 0, right: 0)
+      }else if offsetRight > 0 && !isLeft {
+         btn.imageEdgeInsets = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: -offsetRight)
+      }
+      return btn
+   }
+   
+   
+   /// 自定义view设置到系统导航栏的item
+   ///
+   /// - Parameter cutomView: 自定义view
+   private func setNavrightCustomView(cutomView: UIView) {
+      self.navigationItem.rightBarButtonItem = UIBarButtonItem.init(customView: cutomView)
+   }
+   
+   private func setNavLeftCutomView(cutomView: UIView) {
+      self.navigationItem.leftBarButtonItem = UIBarButtonItem.init(customView: cutomView)
+   }
 }

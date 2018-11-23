@@ -26,7 +26,6 @@ extension UIColor{
     @nonobjc static let x4FB0FF = UIColor.colorWithRGBA(r: 88, g: 183, b: 179, a: 1)
     
     @nonobjc static let modalBackgroundColor = UIColor.colorWithRGBA(r: 0, g: 0, b: 0, a: 0.6)
-    @nonobjc static let modalTintColor = UIColor.colorWithRGBA(r: 50, g: 54, b: 64, a: 1)
     @nonobjc static let modalTitleColor = UIColor.white
     @nonobjc static let modalMessageColor = UIColor.colorWithRGBA(r: 255, g: 255, b: 255, a: 1)
     @nonobjc static let modalNormalBtnColor = UIColor.colorWithRGBA(r: 200, g: 200, b: 200, a: 1)

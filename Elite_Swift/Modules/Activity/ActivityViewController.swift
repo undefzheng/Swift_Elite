@@ -12,19 +12,18 @@ class ActivityViewController: LYBaseViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        self.title = "主页"
+        setNavRightButtonWithText(text: "同步", sel: #selector(sysncClick))
         
-        let testBtn = UIButton.init(type: .custom)
-        testBtn.frame = CGRect(x: 0, y: 100, width: mWidth(), height: 20)
-        testBtn.backgroundColor = UIColor.red
-        testBtn.setTitle("点击", for: .normal)
-        testBtn.addTarget(self, action: #selector(click), for: .touchUpInside)
-        self.view.addSubview(testBtn)
     }
     
-    @objc func click() {
-        
-       customAleatView(title: "测试", message: "详细信息")
-        
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        self.navigationController?.navigationBar.isHidden = false
+    }
+    
+    @objc func sysncClick() {
+       
     }
 
 }
